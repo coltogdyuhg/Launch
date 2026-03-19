@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LaunchPad | Web Portal</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0a0a0c;
+        }
+
+        .glass {
+            background: rgba(17, 17, 19, 0.6);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+
+        .app-card:hover {
+            transform: translateY(-5px);
+        }
+
+        /* Hide scrollbar for Chrome, Safari and Opera */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+
+        /* Hide scrollbar for IE, Edge and Firefox */
+        .no-scrollbar {
+            -ms-overflow-style: none;  /* IE and Edge */
+            scrollbar-width: none;  /* Firefox */
+        }
+    </style>
+</head>
+<body class="text-gray-100 min-h-screen">
+
+    <!-- Login Screen -->
+    <div id="login-screen" class="fixed inset-0 z-50 flex items-center justify-center p-4 overflow-hidden">
+        <!-- Background Gradients -->
+        <div class="absolute top-0 -left-4 w-72 h-72 bg-blue-600/20 rounded-full blur-[120px]"></div>
+        <div class="absolute bottom-0 -right-4 w-96 h-96 bg-purple-600/10 rounded-full blur-[150px]"></div>
+
+        <div class="w-full max-w-md bg-gray-900/50 border border-gray-800 p-10 rounded-3xl glass shadow-2xl relative z-10">
+            <div class="flex flex-col items-center mb-8">
+                <div class="w-16 h-16 bg-blue-600 rounded-2xl flex items-center justify-center mb-4 shadow-lg shadow-blue-600/20">
+                    <i data-lucide="shield-check" class="text-white w-8 h-8"></i>
+                </div>
+                <h1 class="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-gray-400">
+                    LaunchPad
+                </h1>
+                <p class="text-gray-500 mt-2 text-center">Sign in to access your apps</p>
+            </div>
+
+            <form id="login-form" class="space-y-4">
+                <div class="relative">
+                    <i data-lucide="mail" class="absolute left-3 top-3.5 text-gray-500 w-5 h-5"></i>
+                    <input 
+                        type="email" 
+                        placeholder="Email address" 
+                        class="w-full bg-gray-800/50 border border-gray-700 rounded-xl py-3 pl-10 pr-4 focus:outline-none focus:border-blue-500 transition-all"
+                        required
+                    >
+                </div>
+                <div class="relative">
+                    <i data-lucide="lock" class="absolute left-3 top-3.5 text-gray-500 w-5 h-5"></i>
+                    <input 
+                        type="password" 
+                        placeholder="Password" 
+                        class="w-full bg-gray-800/50 border border-gray-700 rounded-xl py-3 pl-10 pr-4 focus:outline-none focus:border-blue-500 transition-all"
+                        required
+                    >
+                </div>
+                <button type="submit" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-semibold py-3 rounded-xl transition-all shadow-lg shadow-blue-900/20">
+                    Sign In
+                </button>
+            </form>
+
+            <div class="relative my-8">
+                <div class="absolute inset-0 flex items-center"><div class="w-full border-t border-gray-800"></div></div>
+                <div class="relative flex justify-center text-xs uppercase"><span class="bg-[#0f0f11] px-2 text-gray-500">Or continue with</span></div>
+            </div>
+
+            <button 
+                onclick="handleLogin()"
+                class="w-full bg-white text-gray-900 hover:bg-gray-100 font-semibold py-3 rounded-xl flex items-center justify-center gap-3 transition-all"
+            >
+                <svg class="w-5 h-5" viewBox="0 0 24 24">
+                    <path fill="currentColor" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
+                    <path fill="currentColor" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
+                    <path fill="currentColor" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" />
+                    <path fill="currentColor" d="M12 5.38c1.62 0 3.06.56 4.21 1.66l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 12-4.53z" />
+                </svg>
+                Sign in with Google
+            </button>
+        </div>
+    </div>
+
+    <!-- Main Dashboard -->
+    <div id="dashboard" class="hidden flex min-h-screen">
+        <!-- Sidebar -->
+        <aside class="w-20 lg:w-64 bg-gray-900/80 border-r border-gray-800 flex flex-col transition-all sticky top-0 h-screen">
+            <div class="p-6 flex items-center gap-3">
+                <div class="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center flex-shrink-0">
+                    <i data-lucide="layout-grid" class="text-white w-5 h-5"></i>
+                </div>
+                <span class="text-xl font-bold hidden lg:block">LaunchPad</span>
+            </div>
+
+            <nav class="flex-1 px-3 space-y-6 mt-4 overflow-y-auto no-scrollbar">
+                <div>
+                    <p class="text-[10px] uppercase tracking-wider text-gray-500 font-bold mb-4 px-3 hidden lg:block">Pinned Apps</p>
+                    <div id="favorites-list" class="space-y-1">
+                        <!-- Favs injected here -->
+                    </div>
+                </div>
+            </nav>
+
+            <div class="p-4 border-t border-gray-800">
+                <button 
+                    onclick="handleLogout()"
+                    class="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-red-500/10 text-gray-400 hover:text-red-400 transition-colors"
+                >
+                    <i data-lucide="log-out" class="w-5 h-5"></i>
+                    <span class="text-sm font-medium hidden lg:block">Sign Out</span>
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="flex-1 flex flex-col">
+            <!-- Header -->
+            <header class="h-20 border-b border-gray-800 flex items-center justify-between px-8 glass sticky top-0 z-20">
+                <div class="relative max-w-md w-full">
+                    <i data-lucide="search" class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 w-4 h-4"></i>
+                    <input 
+                        id="search-input"
+                        type="text" 
+                        placeholder="Search applications..." 
+                        class="w-full bg-gray-800/50 border border-gray-700 rounded-xl py-2 pl-10 pr-4 focus:outline-none focus:border-blue-500 transition-all text-sm"
+                    >
+                </div>
+
+                <div class="flex items-center gap-4">
+                    <button class="p-2 text-gray-400 hover:text-gray-200 transition-colors"><i data-lucide="plus" class="w-5 h-5"></i></button>
+                    <button class="p-2 text-gray-400 hover:text-gray-200 transition-colors"><i data-lucide="settings" class="w-5 h-5"></i></button>
+                    <div id="user-avatar" class="w-10 h-10 bg-gray-800 border border-gray-700 rounded-full flex items-center justify-center text-blue-400 font-bold">
+                        U
+                    </div>
+                </div>
+            </header>
+
+            <!-- Apps Container -->
+            <div class="p-8 lg:p-12 max-w-7xl mx-auto w-full">
+                <div class="flex flex-col md:flex-row items-start md:items-center justify-between mb-10 gap-4">
+                    <div>
+                        <h2 class="text-3xl font-bold text-white mb-2">Welcome back, <span id="user-display-name">User</span></h2>
+                        <p class="text-gray-500">Pick an application to get started with your workflow.</p>
+                    </div>
+                    
+                    <div class="flex bg-gray-900 border border-gray-800 p-1 rounded-xl" id="category-filters">
+                        <button onclick="setFilter('all')" class="filter-btn active px-4 py-1.5 rounded-lg text-sm font-medium bg-blue-600 text-white shadow-lg">All</button>
+                        <button onclick="setFilter('tools')" class="filter-btn px-4 py-1.5 rounded-lg text-sm font-medium text-gray-500 hover:text-gray-300">Tools</button>
+                        <button onclick="setFilter('dev')" class="filter-btn px-4 py-1.5 rounded-lg text-sm font-medium text-gray-500 hover:text-gray-300">Dev</button>
+                        <button onclick="setFilter('media')" class="filter-btn px-4 py-1.5 rounded-lg text-sm font-medium text-gray-500 hover:text-gray-300">Media</button>
+                    </div>
+                </div>
+
+                <!-- Grid -->
+                <div id="apps-grid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-6">
+                    <!-- Apps injected here -->
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // App Data
+        const APP_DATA = [
+            { id: 1, name: 'Google Drive', icon: 'chrome', color: 'text-blue-400', category: 'Tools', url: 'https://drive.google.com' },
+            { id: 2, name: 'GitHub', icon: 'github', color: 'text-gray-100', category: 'Dev', url: 'https://github.com' },
+            { id: 3, name: 'YouTube', icon: 'youtube', color: 'text-red-500', category: 'Media', url: 'https://youtube.com' },
+            { id: 4, name: 'Slack', icon: 'slack', color: 'text-purple-400', category: 'Social', url: 'https://slack.com' },
+            { id: 5, name: 'Figma', icon: 'figma', color: 'text-orange-400', category: 'Design', url: 'https://figma.com' },
+            { id: 6, name: 'Gmail', icon: 'mail', color: 'text-red-400', category: 'Tools', url: 'https://mail.google.com' },
+        ];
+
+        let favorites = [1, 2];
+        let currentFilter = 'all';
+        let searchQuery = '';
+
+        // UI Elements
+        const loginScreen = document.getElementById('login-screen');
+        const dashboard = document.getElementById('dashboard');
+        const loginForm = document.getElementById('login-form');
+        const appsGrid = document.getElementById('apps-grid');
+        const favoritesList = document.getElementById('favorites-list');
+        const searchInput = document.getElementById('search-input');
+
+        // Functions
+        function handleLogin(e) {
+            if (e) e.preventDefault();
+            loginScreen.classList.add('hidden');
+            dashboard.classList.remove('hidden');
+            renderUI();
+        }
+
+        function handleLogout() {
+            dashboard.classList.add('hidden');
+            loginScreen.classList.remove('hidden');
+        }
+
+        function toggleFavorite(id) {
+            if (favorites.includes(id)) {
+                favorites = favorites.filter(fid => fid !== id);
+            } else {
+                favorites.push(id);
+            }
+            renderUI();
+        }
+
+        function setFilter(filter) {
+            currentFilter = filter;
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.remove('bg-blue-600', 'text-white', 'shadow-lg');
+                btn.classList.add('text-gray-500');
+            });
+            event.target.classList.add('bg-blue-600', 'text-white', 'shadow-lg');
+            event.target.classList.remove('text-gray-500');
+            renderUI();
+        }
+
+        function renderUI() {
+            // Render Main Grid
+            const filtered = APP_DATA.filter(app => {
+                const matchesSearch = app.name.toLowerCase().includes(searchQuery.toLowerCase());
+                const matchesFilter = currentFilter === 'all' || app.category.toLowerCase() === currentFilter;
+                return matchesSearch && matchesFilter;
+            });
+
+            appsGrid.innerHTML = filtered.map(app => `
+                <div onclick="window.open('${app.url}', '_blank')" class="app-card group relative flex flex-col items-center p-6 bg-gray-800/40 border border-gray-700 rounded-2xl hover:bg-gray-700/60 transition-all duration-300 cursor-pointer backdrop-blur-sm">
+                    <button 
+                        onclick="event.stopPropagation(); toggleFavorite(${app.id})"
+                        class="absolute top-3 right-3 p-1.5 rounded-full transition-colors ${favorites.includes(app.id) ? 'text-yellow-400 bg-yellow-400/10' : 'text-gray-500 hover:text-gray-300 opacity-0 group-hover:opacity-100'}"
+                    >
+                        <i data-lucide="star" class="w-4 h-4" ${favorites.includes(app.id) ? 'fill="currentColor"' : ''}></i>
+                    </button>
+                    <div class="w-16 h-16 mb-4 flex items-center justify-center bg-gray-900 rounded-xl shadow-lg border border-gray-600 group-hover:border-blue-500 transition-colors">
+                        <i data-lucide="${app.icon}" class="${app.color} w-8 h-8"></i>
+                    </div>
+                    <span class="text-gray-200 font-medium text-sm text-center">${app.name}</span>
+                    <p class="text-gray-500 text-xs mt-1">${app.category}</p>
+                </div>
+            `).join('');
+
+            // Add the "Add App" button to grid
+            appsGrid.innerHTML += `
+                <div class="group flex flex-col items-center justify-center p-6 border-2 border-dashed border-gray-800 rounded-2xl hover:border-gray-600 transition-all cursor-pointer">
+                    <div class="w-12 h-12 mb-3 flex items-center justify-center bg-gray-900 rounded-full text-gray-600 group-hover:text-gray-300 transition-colors">
+                        <i data-lucide="plus" class="w-6 h-6"></i>
+                    </div>
+                    <span class="text-gray-600 text-sm font-medium group-hover:text-gray-300 transition-colors">Add App</span>
+                </div>
+            `;
+
+            // Render Sidebar Favorites
+            const favoriteApps = APP_DATA.filter(app => favorites.includes(app.id));
+            favoritesList.innerHTML = favoriteApps.length > 0 
+                ? favoriteApps.map(app => `
+                    <a href="${app.url}" target="_blank" class="flex items-center gap-3 p-3 rounded-xl hover:bg-gray-800 transition-colors group">
+                        <div class="flex-shrink-0 text-gray-400 group-hover:text-blue-400">
+                            <i data-lucide="${app.icon}" class="w-5 h-5"></i>
+                        </div>
+                        <span class="text-sm text-gray-300 hidden lg:block truncate">${app.name}</span>
+                    </a>
+                `).join('')
+                : `<div class="text-xs text-gray-600 px-3 py-2 hidden lg:block italic">Star an app to pin it here</div>`;
+
+            // Re-initialize icons
+            lucide.createIcons();
+        }
+
+        // Listeners
+        loginForm.addEventListener('submit', handleLogin);
+        
+        searchInput.addEventListener('input', (e) => {
+            searchQuery = e.target.value;
+            renderUI();
+        });
+
+        // Init
+        window.onload = () => {
+            lucide.createIcons();
+        };
+    </script>
+</body>
+</html>
