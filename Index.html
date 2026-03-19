@@ -1,0 +1,265 @@
+import React, { useState, useEffect } from 'react';
+import { 
+  LayoutGrid, 
+  Star, 
+  Search, 
+  LogOut, 
+  Plus, 
+  Settings, 
+  ExternalLink, 
+  Mail, 
+  Lock,
+  Chrome,
+  Github,
+  Youtube,
+  Slack,
+  Figma,
+  ShieldCheck,
+  User
+} from 'lucide-react';
+
+const APP_DATA = [
+  { id: 1, name: 'Google Drive', icon: <Chrome className="text-blue-400" />, category: 'Tools', url: 'https://drive.google.com' },
+  { id: 2, name: 'GitHub', icon: <Github className="text-gray-100" />, category: 'Dev', url: 'https://github.com' },
+  { id: 3, name: 'YouTube', icon: <Youtube className="text-red-500" />, category: 'Media', url: 'https://youtube.com' },
+  { id: 4, name: 'Slack', icon: <Slack className="text-purple-400" />, category: 'Social', url: 'https://slack.com' },
+  { id: 5, name: 'Figma', icon: <Figma className="text-orange-400" />, category: 'Design', url: 'https://figma.com' },
+  { id: 6, name: 'Gmail', icon: <Mail className="text-red-400" />, category: 'Tools', url: 'https://mail.google.com' },
+];
+
+const AppCard = ({ app, isFavorite, toggleFavorite }) => (
+  <div className="group relative flex flex-col items-center p-6 bg-gray-800/40 border border-gray-700 rounded-2xl hover:bg-gray-700/60 transition-all duration-300 hover:scale-105 cursor-pointer backdrop-blur-sm">
+    <button 
+      onClick={(e) => { e.stopPropagation(); toggleFavorite(app.id); }}
+      className={`absolute top-3 right-3 p-1.5 rounded-full transition-colors ${isFavorite ? 'text-yellow-400 bg-yellow-400/10' : 'text-gray-500 hover:text-gray-300 opacity-0 group-hover:opacity-100'}`}
+    >
+      <Star size={16} fill={isFavorite ? "currentColor" : "none"} />
+    </button>
+    <div className="w-16 h-16 mb-4 flex items-center justify-center bg-gray-900 rounded-xl shadow-lg border border-gray-600 group-hover:border-blue-500 transition-colors">
+      {React.cloneElement(app.icon, { size: 32 })}
+    </div>
+    <span className="text-gray-200 font-medium text-sm text-center">{app.name}</span>
+    <p className="text-gray-500 text-xs mt-1">{app.category}</p>
+    <a 
+      href={app.url} 
+      target="_blank" 
+      rel="noopener noreferrer"
+      className="absolute inset-0 z-0 opacity-0"
+    >
+      Launch
+    </a>
+  </div>
+);
+
+const App = () => {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [user, setUser] = useState(null);
+  const [search, setSearch] = useState('');
+  const [favorites, setFavorites] = useState([1, 2]); // IDs of favorite apps
+  const [view, setView] = useState('all'); // 'all', 'tools', 'media', etc.
+
+  const filteredApps = APP_DATA.filter(app => 
+    app.name.toLowerCase().includes(search.toLowerCase()) && 
+    (view === 'all' || app.category.toLowerCase() === view.toLowerCase())
+  );
+
+  const favoriteApps = APP_DATA.filter(app => favorites.includes(app.id));
+
+  const toggleFavorite = (id) => {
+    setFavorites(prev => prev.includes(id) ? prev.filter(f => f !== id) : [...prev, id]);
+  };
+
+  const handleLogin = (e) => {
+    e.preventDefault();
+    setIsLoggedIn(true);
+    setUser({ name: 'User', email: 'user@example.com' });
+  };
+
+  const handleGoogleLogin = () => {
+    // In a real app, this triggers the OAuth popup
+    setIsLoggedIn(true);
+    setUser({ name: 'Google User', email: 'user@gmail.com' });
+  };
+
+  if (!isLoggedIn) {
+    return (
+      <div className="min-h-screen bg-[#0a0a0c] flex items-center justify-center font-sans p-4 relative overflow-hidden text-gray-100">
+        {/* Background Gradients */}
+        <div className="absolute top-0 -left-4 w-72 h-72 bg-blue-600/20 rounded-full blur-[120px]" />
+        <div className="absolute bottom-0 -right-4 w-96 h-96 bg-purple-600/10 rounded-full blur-[150px]" />
+
+        <div className="w-full max-w-md bg-gray-900/50 border border-gray-800 p-10 rounded-3xl backdrop-blur-xl shadow-2xl relative z-10">
+          <div className="flex flex-col items-center mb-8">
+            <div className="w-16 h-16 bg-blue-600 rounded-2xl flex items-center justify-center mb-4 shadow-lg shadow-blue-600/20">
+              <ShieldCheck size={32} className="text-white" />
+            </div>
+            <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-gray-400">
+              LaunchPad
+            </h1>
+            <p className="text-gray-500 mt-2">Sign in to access your apps</p>
+          </div>
+
+          <form onSubmit={handleLogin} className="space-y-4">
+            <div className="relative">
+              <Mail className="absolute left-3 top-3 text-gray-500" size={18} />
+              <input 
+                type="email" 
+                placeholder="Email address" 
+                className="w-full bg-gray-800/50 border border-gray-700 rounded-xl py-3 pl-10 pr-4 focus:outline-none focus:border-blue-500 transition-all"
+                required
+              />
+            </div>
+            <div className="relative">
+              <Lock className="absolute left-3 top-3 text-gray-500" size={18} />
+              <input 
+                type="password" 
+                placeholder="Password" 
+                className="w-full bg-gray-800/50 border border-gray-700 rounded-xl py-3 pl-10 pr-4 focus:outline-none focus:border-blue-500 transition-all"
+                required
+              />
+            </div>
+            <button className="w-full bg-blue-600 hover:bg-blue-500 text-white font-semibold py-3 rounded-xl transition-all shadow-lg shadow-blue-900/20">
+              Sign In
+            </button>
+          </form>
+
+          <div className="relative my-8">
+            <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-gray-800"></div></div>
+            <div className="relative flex justify-center text-xs uppercase"><span className="bg-[#111] px-2 text-gray-500">Or continue with</span></div>
+          </div>
+
+          <button 
+            onClick={handleGoogleLogin}
+            className="w-full bg-white text-gray-900 hover:bg-gray-100 font-semibold py-3 rounded-xl flex items-center justify-center gap-3 transition-all"
+          >
+            <svg className="w-5 h-5" viewBox="0 0 24 24">
+              <path fill="currentColor" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
+              <path fill="currentColor" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
+              <path fill="currentColor" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" />
+              <path fill="currentColor" d="M12 5.38c1.62 0 3.06.56 4.21 1.66l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 12-4.53z" />
+            </svg>
+            Sign in with Google
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="flex min-h-screen bg-[#0a0a0c] text-gray-100 font-sans">
+      {/* Sidebar - Favorites */}
+      <aside className="w-20 lg:w-64 bg-gray-900/80 border-r border-gray-800 flex flex-col items-center lg:items-stretch transition-all">
+        <div className="p-6 flex items-center gap-3">
+          <div className="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center flex-shrink-0">
+            <LayoutGrid size={20} className="text-white" />
+          </div>
+          <span className="text-xl font-bold hidden lg:block">LaunchPad</span>
+        </div>
+
+        <nav className="flex-1 px-3 space-y-6 mt-4">
+          <div>
+            <p className="text-[10px] uppercase tracking-wider text-gray-500 font-bold mb-4 px-3 hidden lg:block">Pinned Apps</p>
+            <div className="space-y-1">
+              {favoriteApps.map(app => (
+                <a key={app.id} href={app.url} target="_blank" className="flex items-center gap-3 p-3 rounded-xl hover:bg-gray-800 transition-colors group">
+                  <div className="flex-shrink-0 text-gray-400 group-hover:text-blue-400">
+                    {React.cloneElement(app.icon, { size: 20 })}
+                  </div>
+                  <span className="text-sm text-gray-300 hidden lg:block truncate">{app.name}</span>
+                </a>
+              ))}
+              {favoriteApps.length === 0 && (
+                <div className="text-xs text-gray-600 px-3 py-2 hidden lg:block italic">Star an app to pin it here</div>
+              )}
+            </div>
+          </div>
+        </nav>
+
+        <div className="p-4 border-t border-gray-800">
+          <button 
+            onClick={() => setIsLoggedIn(false)}
+            className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-red-500/10 text-gray-400 hover:text-red-400 transition-colors"
+          >
+            <LogOut size={20} />
+            <span className="text-sm font-medium hidden lg:block">Sign Out</span>
+          </button>
+        </div>
+      </aside>
+
+      {/* Main Content */}
+      <main className="flex-1 flex flex-col">
+        {/* Header */}
+        <header className="h-20 border-b border-gray-800 flex items-center justify-between px-8 bg-[#0a0a0c]/50 backdrop-blur-md sticky top-0 z-20">
+          <div className="relative max-w-md w-full">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" size={18} />
+            <input 
+              type="text" 
+              placeholder="Search applications..." 
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="w-full bg-gray-800/50 border border-gray-700 rounded-xl py-2 pl-10 pr-4 focus:outline-none focus:border-blue-500 transition-all text-sm"
+            />
+          </div>
+
+          <div className="flex items-center gap-4">
+            <button className="p-2 text-gray-400 hover:text-gray-200 transition-colors"><Plus size={22} /></button>
+            <button className="p-2 text-gray-400 hover:text-gray-200 transition-colors"><Settings size={22} /></button>
+            <div className="w-10 h-10 bg-gray-800 border border-gray-700 rounded-full flex items-center justify-center text-blue-400 font-bold">
+              {user.name.charAt(0)}
+            </div>
+          </div>
+        </header>
+
+        {/* Apps Grid */}
+        <div className="p-8 lg:p-12 max-w-7xl mx-auto w-full">
+          <div className="flex items-center justify-between mb-10">
+            <div>
+              <h2 className="text-3xl font-bold text-white mb-2">Welcome back, {user.name}</h2>
+              <p className="text-gray-500">Pick an application to get started with your workflow.</p>
+            </div>
+            
+            <div className="flex bg-gray-900 border border-gray-800 p-1 rounded-xl">
+              {['All', 'Tools', 'Dev', 'Media'].map((cat) => (
+                <button 
+                  key={cat}
+                  onClick={() => setView(cat.toLowerCase())}
+                  className={`px-4 py-1.5 rounded-lg text-sm font-medium transition-all ${view === cat.toLowerCase() ? 'bg-blue-600 text-white shadow-lg' : 'text-gray-500 hover:text-gray-300'}`}
+                >
+                  {cat}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-6">
+            {filteredApps.map(app => (
+              <AppCard 
+                key={app.id} 
+                app={app} 
+                isFavorite={favorites.includes(app.id)} 
+                toggleFavorite={toggleFavorite}
+              />
+            ))}
+            
+            {/* Add Custom Button */}
+            <div className="group flex flex-col items-center justify-center p-6 border-2 border-dashed border-gray-800 rounded-2xl hover:border-gray-600 transition-all cursor-pointer">
+              <div className="w-12 h-12 mb-3 flex items-center justify-center bg-gray-900 rounded-full text-gray-600 group-hover:text-gray-300 transition-colors">
+                <Plus size={24} />
+              </div>
+              <span className="text-gray-600 text-sm font-medium group-hover:text-gray-300 transition-colors">Add App</span>
+            </div>
+          </div>
+
+          {filteredApps.length === 0 && (
+            <div className="flex flex-col items-center justify-center py-20 text-gray-600">
+              <Search size={48} className="mb-4 opacity-20" />
+              <p>No applications found matching "{search}"</p>
+            </div>
+          )}
+        </div>
+      </main>
+    </div>
+  );
+};
+
+export default App;
